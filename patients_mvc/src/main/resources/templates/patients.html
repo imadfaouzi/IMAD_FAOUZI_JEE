@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{template1}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap-icons/1.10.3/font/bootstrap-icons.css">
+    <script src="/webjars/bootstrap/5.1.1/js/bootstrap.bundle.js"></script>
+
+</head>
+<body>
+<div layout:fragment="cont1">
+
+<div class="container mt-2" >
+    <div class="card" style="box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+        <div class="card-header">liste des patients</div>
+    <div class="card-body">
+        <form method="get" th:action="@{/user/index}">
+            <label>keyword</label>
+            <input type="text" name="keyword" th:value="${keyword}" >
+            <button type="submit" class="btn btn-primary">chercher</button>
+        </form>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th><th>Nom</th><th>Date</th><th>MALADE</th><th>SCORRE</th><th></th>
+        </tr>
+    </thead>
+    <tbody>
+     <tr th:each="p:${listePatients}">
+         <td th:text="${p.id}"></td>
+         <td th:text="${p.nom}"></td>
+         <td th:text="${p.dataNaissance}"></td>
+         <td th:text="${p.isMalade()}"></td>
+         <td th:text="${p.score}"></td>
+         <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+             <a onclick="return confirm('etes vous sure?')" class="btn btn-danger" th:href="@{/admin/delete(id=${p.id}, keyword=${keyword} , page=${curentPage})}"><i class="bi bi-trash"></i> </a>
+         </td>
+         <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+             <a  class="btn btn-success" th:href="@{/admin/editPatient(id=${p.id})}"><i class="bi bi-pencil"></i></a>
+         </td>
+     </tr>
+    </tbody>
+
+
+</table>
+        <ul class="nav nav-pills">
+            <li th:each="page,status:${pages}">
+                <a th:class="${status.index==curentPage?'btn btn-info ms-1':'btn btn-outline-info ms-1' }" class="btn btn-outline-info m-lg-1"
+                   th:text="${status.index}"
+                   th:href="@{/user/index(page=${status.index} ,keyword = ${keyword})}"
+                ></a>
+            </li>
+        </ul>
+    </div>
+        </div>
+</div>
+</div>
+
+
+</body>
+</html>
